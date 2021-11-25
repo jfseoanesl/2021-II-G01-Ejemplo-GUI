@@ -2,11 +2,20 @@
 package Vista;
 
 
+import entidades.Competidor;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.FlowLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.IOException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import modelo.RegistroClasificacion;
 
 /**
  *
@@ -21,15 +30,18 @@ public class VentanaConsulta extends JDialog {
     private JTable tabla;
     private DefaultTableModel modelo;
     private String titulos[]={"No doc", "Nombre", "Equipo", "Posicion", "Tiempo"};
+    private RegistroClasificacion logica;
     
     public VentanaConsulta(JFrame frame, boolean bln) {
         super(frame, bln);
+        this.logica = new RegistroClasificacion();
         this.setTitle("Consulta de pilotos - V1");
         this.iniciarComponentes();
         //this.pack(); 
         this.setSize(800, 400);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        this.actualizarTabla();
         this.setVisible(true);
     }
     
@@ -49,6 +61,7 @@ public class VentanaConsulta extends JDialog {
         
         this.lFiltro= new JLabel("Filtro busqueda: ");
         this.tFiltro= new JTextField(10);
+        this.tFiltro.addKeyListener(new eventoTecladoFiltro());
         
         this.panelFiltro.add(this.lFiltro);
         this.panelFiltro.add(this.tFiltro);
@@ -71,6 +84,40 @@ public class VentanaConsulta extends JDialog {
     
     }
     
+    public void actualizarTabla(){
+        String texto = this.tFiltro.getText();
+        try {
+            List<Competidor> lista = this.logica.leer();
+            this.modelo.setNumRows(0);
+            for(Competidor c: lista){
+                String fila[]={c.getCc(), c.getNombrePiloto(), c.getEquipoPiloto(), String.valueOf(c.getPosicioClasificacion()), String.valueOf(c.getTiempoCarrera())};
+                if(texto==null){
+                    this.modelo.addRow(fila);
+                }
+                else{
+                    if(c.getNombrePiloto().toUpperCase().contains(texto.toUpperCase())){
+                        this.modelo.addRow(fila);
+                    }
+                }
+            }
+            
+            
+        } catch (IOException ex) {
+           VentanaEmergente.mostrarMsg(this, "Error", ex.getMessage(), JOptionPane.ERROR_MESSAGE);
+        }
+        
+    }
+    
+    
+    class eventoTecladoFiltro extends KeyAdapter{
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            actualizarTabla();
+        }
+        
+    
+    }
     
     
     

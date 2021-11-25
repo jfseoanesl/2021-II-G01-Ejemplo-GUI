@@ -5,12 +5,17 @@
  */
 package Vista;
 
+import entidades.Competidor;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.text.MaskFormatter;
+import modelo.RegistroClasificacion;
 
 /**
  *
@@ -23,6 +28,7 @@ public class VentanaRegistro extends JDialog {
     private JTextField tNombre;
     private JComboBox cbEquipo;
     private JSpinner jsPosicion;
+    private RegistroClasificacion logica;
     
     private Container contenedor;
     
@@ -31,6 +37,7 @@ public class VentanaRegistro extends JDialog {
     
     public VentanaRegistro(JFrame owner, boolean modal) {
         super(owner, modal);
+        this.logica = new RegistroClasificacion();
         this.initComponentes();
         this.setTitle("Registro de clasificacion---ventana secundaria");
         this.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -54,9 +61,16 @@ public class VentanaRegistro extends JDialog {
         this.panelBotones.setLayout(new GridLayout(4, 1, 5,5));
         
         this.bGuardar = new JButton("Guardar");
+        this.bGuardar.addActionListener(new clickBotonGuardar());
+        
         this.bBuscar = new JButton("Buscar");
+        this.bBuscar.addActionListener(new clickBotonBuscar());
+        
         this.bEliminar = new JButton("Eliminar");
+        this.bEliminar.addActionListener(new clickBotonEliminar());
+        
         this.bCancelar = new JButton("Cancelar");
+        this.bCancelar.addActionListener(new clickBotonCancelar());
         
         
         this.panelBotones.add(this.bGuardar);
@@ -132,6 +146,83 @@ public class VentanaRegistro extends JDialog {
         
     }
     
+    public Competidor leerDatosComponentes(){
+        
+        Competidor c = new Competidor();
+        Object cc = this.ftCc.getValue();
+        if(cc!=null)
+            c.setCc(cc.toString());
+        else
+            c.setCc(null);
+        
+        c.setNombrePiloto(this.tNombre.getText());
+        c.setEquipoPiloto(this.cbEquipo.getSelectedItem().toString());
+        c.setPosicioClasificacion(Integer.valueOf(this.jsPosicion.getValue().toString()));
+        
+        Object tiempo = this.ftTiempo.getValue();
+        if(tiempo!=null)
+            c.setTiempoCarrera(Double.valueOf(tiempo.toString()));
+        else
+            c.setTiempoCarrera(0);
+        
+        return c;
+    
+    }
+    
+    
+    public void guardar(){
+        Competidor c = this.leerDatosComponentes();
+        try {
+            this.logica.escribir(c);
+            VentanaEmergente.mostrarMsg(this, "Confirmacion", "Registro exitoso", JOptionPane.INFORMATION_MESSAGE);
+            
+        } catch (IOException | NullPointerException  ex) {
+            
+            VentanaEmergente.mostrarMsg(this, "Error", ex.getMessage(), JOptionPane.ERROR_MESSAGE);
+        }
+        
+        
+    }
+    
+    
+    class clickBotonGuardar implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+           guardar();
+        }
+
+    }
+    
+    class clickBotonBuscar implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+           //codigo
+           System.out.println("Buscar");
+        }
+
+    }
+    
+    class clickBotonEliminar implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+           //codigo
+           System.out.println("Eliminar");
+        }
+
+    }
+    
+    class clickBotonCancelar implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+           //codigo
+           System.out.println("Cancelar");
+        }
+
+    }
     
     
 }

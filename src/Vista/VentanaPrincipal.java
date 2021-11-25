@@ -5,16 +5,18 @@
  */
 package Vista;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 
 /**
  *
  * @author jairo
  */
-public class VentanaPrincipal extends JFrame {
+public class VentanaPrincipal extends JFrame implements ActionListener {
     private JMenuBar barraMenu;
     private JMenu menu;
-    private JMenuItem menuItem;
+    private JMenuItem menuItemRegistro, menuItemConsulta;
 
     public VentanaPrincipal() {
         
@@ -35,8 +37,27 @@ public class VentanaPrincipal extends JFrame {
         this.menu = new JMenu("Opciones");
         this.barraMenu.add(this.menu);
         
-        this.menuItem = new JMenuItem("Registrar");
-        this.menu.add(menuItem);
+        this.menuItemRegistro = new JMenuItem("Registrar");
+        this.menuItemRegistro.addActionListener(this);
+        this.menu.add(this.menuItemRegistro);
+        
+        this.menuItemConsulta = new JMenuItem("Consulta");
+        this.menuItemConsulta.addActionListener(this);
+        this.menu.add(this.menuItemConsulta);
+        
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        
+        if(e.getSource()==this.menuItemRegistro){
+            VentanaRegistro registro = new VentanaRegistro(this, true);
+        }
+        else{
+            
+            VentanaConsulta consulta = new VentanaConsulta(this, true);
+        }
+        
         
     }
     

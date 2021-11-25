@@ -49,6 +49,13 @@ public class RegistroClasificacion {
     }
     
     public boolean escribir(Competidor c) throws IOException{
+        
+        if(c.getCc()==null || c.getCc().trim().length()==0)
+            throw new NullPointerException("La cedula no puede ser vacia");
+        
+        if(c.getNombrePiloto()==null || c.getNombrePiloto().trim().length()==0)
+            throw new NullPointerException("El nombre no puede ser vacio");
+               
         return this.datos.escribir(c);
     }
     
